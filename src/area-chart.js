@@ -1,11 +1,10 @@
 import * as shape from 'd3-shape'
 import PropTypes from 'prop-types'
-import Chart from './chart/chart'
+import { Chart } from './chart/chart'
 
-class AreaChart extends Chart {
-    createPaths({ data, x, y }) {
-        const { curve, start } = this.props
-
+const AreaChart = (props) => {
+    const _createPaths = ({ data, x, y }) => {
+        const { curve, start } = props
         const area = shape
             .area()
             .x((d) => x(d.x))
@@ -27,6 +26,10 @@ class AreaChart extends Chart {
             line,
         }
     }
+    return Chart({
+        ...props,
+        createPaths: _createPaths
+    });
 }
 
 AreaChart.propTypes = {

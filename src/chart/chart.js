@@ -2,7 +2,7 @@ import * as array from 'd3-array'
 import * as scale from 'd3-scale'
 import * as shape from 'd3-shape'
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
+import React, { PureComponent, useMemo } from 'react'
 import { View } from 'react-native'
 import Svg from 'react-native-svg'
 import Path from '../animated-path'
@@ -52,10 +52,10 @@ class Chart extends PureComponent {
             return <View style={style} />
         }
 
-        const mappedData = data.map((item, index) => ({
+        const mappedData = useMemo(() => data.map((item, index) => ({
             y: yAccessor({ item, index }),
             x: xAccessor({ item, index }),
-        }))
+        })), [data]);
 
         const yValues = mappedData.map((item) => item.y)
         const xValues = mappedData.map((item) => item.x)
@@ -76,11 +76,11 @@ class Chart extends PureComponent {
             .range([left, width - right])
             .clamp(clampX)
 
-        const paths = this.createPaths({
+        const paths = useMemo(() => this.createPaths({
             data: mappedData,
             x,
             y,
-        })
+        }), [mappedData]);
 
         const ticks = y.ticks(numberOfTicks)
 
@@ -93,6 +93,16 @@ class Chart extends PureComponent {
             height,
             ...paths,
         }
+        
+        const DrawPath = useMemo(() => (
+            <Path
+                fill={'none'}
+                {...svg}
+                d={paths.path}
+                animate={animate}
+                animationDuration={animationDuration}
+            />
+        ), [paths.path]);
 
         return (
             <View style={style}>
@@ -105,13 +115,7 @@ class Chart extends PureComponent {
                                 }
                                 return null
                             })}
-                            <Path
-                                fill={'none'}
-                                {...svg}
-                                d={paths.path}
-                                animate={animate}
-                                animationDuration={animationDuration}
-                            />
+                            <DrawPath />
                             {React.Children.map(children, (child) => {
                                 if (child && !child.props.belowChart) {
                                     return React.cloneElement(child, extraProps)

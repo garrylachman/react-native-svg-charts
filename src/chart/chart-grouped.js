@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react'
 import { View } from 'react-native'
 import Svg from 'react-native-svg'
 import Path from '../animated-path'
-import Chart from './chart'
+import { Chart } from './chart'
 
 class ChartGrouped extends PureComponent {
     state = {

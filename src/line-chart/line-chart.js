@@ -1,23 +1,27 @@
-import React, { useMemo } from 'react'
 import * as shape from 'd3-shape'
-import Chart from '../chart/chart'
+import PropTypes from 'prop-types'
+import { Chart } from '../chart/chart'
 
-class LineChart extends Chart {
-    createPaths({ data, x, y }) {
-        const { curve } = this.props
+const LineChart = (props) => {
+    const _createPaths = ({ data, x, y }) => {
+        const { curve, start } = props
 
-        const line = useMemo(() => shape
+        const line = shape
             .line()
             .x((d) => x(d.x))
             .y((d) => y(d.y))
             .defined((item) => typeof item.y === 'number')
-            .curve(curve)(data), [data]);
+            .curve(curve)(data)
 
         return {
-            path: line,
+            path: area,
             line,
         }
     }
+    return Chart({
+        ...props,
+        createPaths: _createPaths
+    });
 }
 
 LineChart.propTypes = {
